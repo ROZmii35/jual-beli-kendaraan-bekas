@@ -1,7 +1,7 @@
 package com.jualbelikendaraan.jualbeli.controller;
 
-import com.kendaraan.jualbeli.model.Kendaraan;
-import com.kendaraan.jualbeli.repository.KendaraanRepository;
+import com.jualbelikendaraan.jualbeli.model.Kendaraan;
+import com.jualbelikendaraan.jualbeli.repository.KendaraanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
