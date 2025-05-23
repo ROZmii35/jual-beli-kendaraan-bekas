@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @Autowired
-    private UserRepository udserRepository;
+    private UserRepository userRepository;
          
     @GetMapping
     public List<User> getAllUsers() {

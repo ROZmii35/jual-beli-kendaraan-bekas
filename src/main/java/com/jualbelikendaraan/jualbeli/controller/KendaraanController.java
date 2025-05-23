@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RestMapping("/api/kendaraan")
+@RequestMapping("/api/kendaraan")
 public class KendaraanController {
-    @Autowiredprivate KendaraanRepository kendaraanRepository;
+    @Autowired private KendaraanRepository kendaraanRepository;
 
     @GetMapping
     public List<Kendaraan> getAllKendaraan() {
