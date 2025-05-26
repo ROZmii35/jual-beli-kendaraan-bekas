@@ -1,0 +1,17 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #eef2f5;
+    padding: 40px;
+    text-align: center;
+}
+h1 {
+    color: #333;
+}
+.menu a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #007bff;
+}
+.menu a:hover {
+    text-decoration: underline;
+}
