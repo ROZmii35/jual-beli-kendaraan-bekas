@@ -3,17 +3,928 @@
 <head>
     <meta charset="UTF-8" />
     <title>VehicleMarket</title>
-    <link rel="stylesheet" th:href="@{/index.css}" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+
+        @layer base {
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 222.2 84% 4.9%;
+            --primary: 222.2 47.4% 11.2%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96.1%;
+            --secondary-foreground: 222.2 47.4% 11.2%;
+            --muted: 210 40% 96.1%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96.1%;
+            --accent-foreground: 222.2 47.4% 11.2%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 222.2 84% 4.9%;
+            --radius: 0.5rem;
+            
+            /* Custom brand colors */
+            --brand-primary: 210 100% 50%;
+            --brand-secondary: 25 100% 50%;
+            --brand-accent: 160 100% 45%;
+        }
+
+        .dark {
+            --background: 222.2 84% 4.9%;
+            --foreground: 210 40% 98%;
+            --card: 222.2 84% 4.9%;
+            --card-foreground: 210 40% 98%;
+            --popover: 222.2 84% 4.9%;
+            --popover-foreground: 210 40% 98%;
+            --primary: 210 40% 98%;
+            --primary-foreground: 222.2 47.4% 11.2%;
+            --secondary: 217.2 32.6% 17.5%;
+            --secondary-foreground: 210 40% 98%;
+            --muted: 217.2 32.6% 17.5%;
+            --muted-foreground: 215 20.2% 65.1%;
+            --accent: 217.2 32.6% 17.5%;
+            --accent-foreground: 210 40% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 217.2 32.6% 17.5%;
+            --input: 217.2 32.6% 17.5%;
+            --ring: 212.7 26.8% 83.9%;
+        }
+        }
+
+        @layer base {
+        * {
+            @apply border-border;
+        }
+        body {
+            @apply bg-background text-foreground;
+            font-feature-settings: "rlig" 1, "calt" 1;
+        }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+        background: hsl(var(--secondary));
+        border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+        background: hsl(var(--muted-foreground) / 0.5);
+        border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+        background: hsl(var(--muted-foreground) / 0.8);
+        }
+
+        /* Custom animations */
+        @keyframes float {
+        0% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+        100% {
+            transform: translateY(0px);
+        }
+        }
+
+        .animate-float {
+        animation: float 3s ease-in-out infinite;
+        }
+
+        /* Custom gradient text */
+        .gradient-text {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-green-500;
+        }
+
+        /* Custom card hover effect */
+        .card-hover {
+        @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+        }
+    </style>
 </head>
 <body>
-    <h1>Selamat Datang di VehicleMarket</h1>
-    <p>Temukan dan jual kendaraan bekas Anda dengan mudah.</p>
-
-    <div class="menu">
-        <a th:href="@{/login}">Login</a> |
-        <a th:href="@{/register}">Register</a>
-    </div>
-
+    <!-- Navbar -->
+    <header class="sticky top-0 z-50 w-full bg-white border-b shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="/" class="flex items-center">
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent">
+                        VehicleMarket
+                    </h1>
+                </a>
+                <!-- Search Bar - Desktop -->
+                <div class="hidden md:flex flex-1 max-w-xl mx-4">
+                    <form class="w-full flex" role="search">
+                        <input
+                            type="search"
+                            placeholder="Search for vehicles..."
+                            class="w-full rounded-r-none focus-visible:ring-blue-500"
+                            aria-label="Search for vehicles"
+                        />
+                        <button 
+                            type="submit" 
+                            class="rounded-l-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
+                            aria-label="Search"
+                        >
+                            🔍
+                        </button>
+                    </form>
+                </div>
+                <!-- Navigation - Desktop -->
+                <nav class="hidden md:flex items-center space-x-1" aria-label="Main Navigation">
+                    <a href="/wishlist" class="flex items-center gap-1 px-2 py-1 hover:bg-gray-100 rounded">
+                        ❤️ <span class="hidden lg:inline">Wishlist</span>
+                    </a>
+                    <a href="/messages" class="flex items-center gap-1 px-2 py-1 hover:bg-gray-100 rounded">
+                        💬 <span class="hidden lg:inline">Messages</span>
+                    </a>
+                    <a href="/notifications" class="flex items-center gap-1 px-2 py-1 hover:bg-gray-100 rounded">
+                        🔔 <span class="hidden lg:inline">Notifications</span>
+                    </a>
+                    <a href="/cart" class="flex items-center gap-1 px-2 py-1 hover:bg-gray-100 rounded">
+                        🛒 <span class="hidden lg:inline">Cart</span>
+                    </a>
+                    <a href="/profile" class="flex items-center gap-1 px-2 py-1 hover:bg-gray-100 rounded">
+                        👤 <span class="hidden lg:inline">Profile</span>
+                    </a>
+                    <a href="/sell" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded ml-2">
+                        Sell Vehicle
+                    </a>
+                </nav>
+                <!-- Mobile Menu Button -->
+                <div class="flex md:hidden">
+                    <button id="mobileMenuBtn" class="px-2 py-1" aria-label="Open mobile menu">
+                        ☰
+                    </button>
+                </div>
+            </div>
+            <!-- Search Bar - Mobile -->
+            <div class="md:hidden py-2">
+                <form class="flex" role="search">
+                    <input
+                        type="search"
+                        placeholder="Search for vehicles..."
+                        class="w-full rounded-r-none"
+                        aria-label="Search for vehicles"
+                    />
+                    <button 
+                        type="submit" 
+                        class="rounded-l-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
+                        aria-label="Search"
+                    >
+                        🔍
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+    <!--Hero Section-->
+    <section class="relative bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white overflow-hidden">
+        <!-- Background pattern -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.2"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E'); background-size: 24px 24px;"></div>
+        </div>
+        <div class="container mx-auto px-4 py-16 md:py-24 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Hero Content -->
+                <div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+                        Find Your Perfect <span class="text-blue-300">Used Vehicle</span>
+                    </h1>
+                    <p class="text-lg md:text-xl mb-8 text-blue-100 max-w-xl">
+                        Browse thousands of quality used cars, trucks, and motorcycles from trusted sellers nationwide.
+                    </p>
+                    <!-- Search Form -->
+                    <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 mb-8">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <select class="bg-white/90 text-gray-800" aria-label="Select vehicle type">
+                                <option value="" disabled selected>Vehicle Type</option>
+                                <option value="all">All Vehicles</option>
+                                <option value="cars">Cars</option>
+                                <option value="trucks">Trucks</option>
+                                <option value="suvs">SUVs</option>
+                                <option value="motorcycles">Motorcycles</option>
+                                <option value="vans">Vans</option>
+                            </select>
+                            <select class="bg-white/90 text-gray-800" aria-label="Select vehicle make">
+                                <option value="" disabled selected>Make</option>
+                                <option value="all">All Makes</option>
+                                <option value="toyota">Toyota</option>
+                                <option value="honda">Honda</option>
+                                <option value="ford">Ford</option>
+                                <option value="chevrolet">Chevrolet</option>
+                                <option value="bmw">BMW</option>
+                                <option value="mercedes">Mercedes-Benz</option>
+                            </select>
+                            <select class="bg-white/90 text-gray-800" aria-label="Select vehicle model">
+                                <option value="" disabled selected>Model</option>
+                                <option value="all">All Models</option>
+                                <option value="camry">Camry</option>
+                                <option value="civic">Civic</option>
+                                <option value="f150">F-150</option>
+                                <option value="silverado">Silverado</option>
+                                <option value="3series">3 Series</option>
+                                <option value="eclass">E-Class</option>
+                            </select>
+                        </div>
+                        <div class="flex">
+                            <input placeholder="Search by keywords..." class="bg-white/90 text-gray-800 rounded-r-none" aria-label="Search by keywords" />
+                            <button class="rounded-l-none bg-blue-600 hover:bg-blue-700" aria-label="Search">
+                                🔍 Search
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Quick Links -->
+                    <div class="flex flex-wrap gap-3">
+                        <a href="/category/cars" class="inline-flex items-center text-blue-200 hover:text-white">
+                            <span>Popular Cars</span>
+                            <span class="h-4 w-4">➡️</span>
+                        </a>
+                        <a href="/category/trucks" class="inline-flex items-center text-blue-200 hover:text-white">
+                            <span>Trucks</span>
+                            <span class="h-4 w-4">➡️</span>
+                        </a>
+                        <a href="/category/suvs" class="inline-flex items-center text-blue-200 hover:text-white">
+                            <span>SUVs</span>
+                            <span class="h-4 w-4">➡️</span>
+                        </a>
+                        <a href="/category/luxury" class="inline-flex items-center text-blue-200 hover:text-white">
+                            <span>Luxury Vehicles</span>
+                            <span class="h-4 w-4">➡️</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- Hero Image -->
+                <div class="hidden lg:block">
+                    <div class="relative">
+                        <div class="absolute -inset-4 bg-blue-400/20 rounded-full blur-xl"></div>
+                        <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+                            <img class="w-full h-auto" alt="Luxury car showcase" src="https://images.unsplash.com/photo-1607806266487-fd2c3cfe7753" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold">Featured Vehicles</h2>
+                <button class="group">
+                    View all
+                    <span class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1">➡️</span>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Vehicle Card 1 -->
+                <div class="h-full overflow-hidden card-hover">
+                    <div class="relative">
+                        <img class="h-48 w-full object-cover" alt="2019 Toyota Camry XSE" src="https://images.unsplash.com/photo-1693004097242-e3b508903e39" />
+                        <div class="absolute top-2 left-2">
+                            <span class="badge badge-success">Featured</span>
+                        </div>
+                        <div class="absolute top-2 right-2">
+                            <span class="badge badge-secondary flex items-center gap-1">
+                                <span class="h-3 w-3 fill-current">⭐</span> 4.8
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="mb-2 flex items-center justify-between">
+                            <span class="badge badge-outline text-blue-600 border-blue-600">2019</span>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span class="h-3 w-3 mr-1">⏰</span> 2 days ago
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-lg mb-1 line-clamp-1">2019 Toyota Camry XSE</h3>
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <span class="h-3 w-3 mr-1">📍</span>
+                            <span class="line-clamp-1">New York, NY</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <div class="text-sm">
+                                <span class="text-gray-500">Mileage:</span> 35,000 mi
+                            </div>
+                            <div class="text-sm">
+                                <span class="text-gray-500">Condition:</span> Excellent
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 flex justify-between items-center">
+                        <div class="flex items-center">
+                            <span class="h-4 w-4 text-green-600 mr-1">🏷️</span>
+                            <span class="font-bold text-lg">$22,500</span>
+                        </div>
+                        <button class="btn btn-sm">
+                            <a href="/vehicle/1">View Details</a>
+                        </button>
+                    </div>
+                </div>
+                <!-- Vehicle Card 2 -->
+                <div class="h-full overflow-hidden card-hover">
+                    <div class="relative">
+                        <img class="h-48 w-full object-cover" alt="2018 Honda Civic Sport" src="https://images.unsplash.com/photo-1693004097242-e3b508903e39" />
+                        <div class="absolute top-2 left-2">
+                            <span class="badge badge-success">Featured</span>
+                        </div>
+                        <div class="absolute top-2 right-2">
+                            <span class="badge badge-secondary flex items-center gap-1">
+                                <span class="h-3 w-3 fill-current">⭐</span> 4.5
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="mb-2 flex items-center justify-between">
+                            <span class="badge badge-outline text-blue-600 border-blue-600">2018</span>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span class="h-3 w-3 mr-1">⏰</span> 5 days ago
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-lg mb-1 line-clamp-1">2018 Honda Civic Sport</h3>
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <span class="h-3 w-3 mr-1">📍</span>
+                            <span class="line-clamp-1">Los Angeles, CA</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <div class="text-sm">
+                                <span class="text-gray-500">Mileage:</span> 42,000 mi
+                            </div>
+                            <div class="text-sm">
+                                <span class="text-gray-500">Condition:</span> Good
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 flex justify-between items-center">
+                        <div class="flex items-center">
+                            <span class="h-4 w-4 text-green-600 mr-1">🏷️</span>
+                            <span class="font-bold text-lg">$18,900</span>
+                        </div>
+                        <button class="btn btn-sm">
+                            <a href="/vehicle/2">View Details</a>
+                        </button>
+                    </div>
+                </div>
+                <!-- Vehicle Card 3 -->
+                <div class="h-full overflow-hidden card-hover">
+                    <div class="relative">
+                        <img class="h-48 w-full object-cover" alt="Ford F-150 Raptor" src="https://images.unsplash.com/photo-1693004097242-e3b508903e39" />
+                        <div class="absolute top-2 left-2">
+                            <span class="badge badge-success">Featured</span>
+                        </div>
+                        <div class="absolute top-2 right-2">
+                            <span class="badge badge-secondary flex items-center gap-1">
+                                <span class="h-3 w-3 fill-current">⭐</span> 4.9
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="mb-2 flex items-center justify-between">
+                            <span class="badge badge-outline text-blue-600 border-blue-600">2020</span>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span class="h-3 w-3 mr-1">⏰</span> 1 days ago
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-lg mb-1 line-clamp-1">2020 Ford F-150 Raptor</h3>
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <span class="h-3 w-3 mr-1">📍</span>
+                            <span class="line-clamp-1">Dallas, TX</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <div class="text-sm">
+                                <span class="text-gray-500">Mileage:</span> 28,000 mi
+                            </div>
+                            <div class="text-sm">
+                                <span class="text-gray-500">Condition:</span> Excellent
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 flex justify-between items-center">
+                        <div class="flex items-center">
+                            <span class="h-4 w-4 text-green-600 mr-1">🏷️</span>
+                            <span class="font-bold text-lg">$48,500</span>
+                        </div>
+                        <button class="btn btn-sm">
+                            <a href="/vehicle/3">View Details</a>
+                        </button>
+                    </div>
+                </div>
+                <!-- Vehicle Card 4 -->
+                <div class="h-full overflow-hidden card-hover">
+                    <div class="relative">
+                        <img class="h-48 w-full object-cover" alt="2017 BMW 5 Series 530i" src="https://images.unsplash.com/photo-1693004097242-e3b508903e39" />
+                        <div class="absolute top-2 left-2">
+                            <span class="badge badge-success">Featured</span>
+                        </div>
+                        <div class="absolute top-2 right-2">
+                            <span class="badge badge-secondary flex items-center gap-1">
+                                <span class="h-3 w-3 fill-current">⭐</span> 4.6
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="mb-2 flex items-center justify-between">
+                            <span class="badge badge-outline text-blue-600 border-blue-600">2017</span>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span class="h-3 w-3 mr-1">⏰</span> 1 days ago
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-lg mb-1 line-clamp-1">2017 BMW 5 Series 530i</h3>
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <span class="h-3 w-3 mr-1">📍</span>
+                            <span class="line-clamp-1">Dallas, TX</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <div class="text-sm">
+                                <span class="text-gray-500">Mileage:</span> 45,000 mi
+                            </div>
+                            <div class="text-sm">
+                                <span class="text-gray-500">Condition:</span> Excellent
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 flex justify-between items-center">
+                        <div class="flex items-center">
+                            <span class="h-4 w-4 text-green-600 mr-1">🏷️</span>
+                            <span class="font-bold text-lg">$29,800</span>
+                        </div>
+                        <button class="btn btn-sm">
+                            <a href="/vehicle/4">View Details</a>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">Browse by Category</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    Explore our wide selection of used vehicles by category to find exactly what you're looking for
+                </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Category Card 1 -->
+                <div class="group block relative overflow-hidden rounded-xl shadow-md h-64 transition-all duration-300 hover:shadow-xl">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
+                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Cars" src="https://images.unsplash.com/photo-1701058670970-e2e83fd9e68d" />
+                    <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">Cars</h3>
+                                <p class="text-gray-200 text-sm mb-2">Sedans, coupes, convertibles, and more</p>
+                                <span class="text-blue-300 text-sm">1245 listings</span>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm p-2 rounded-full opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                                <span class="h-5 w-5 text-white">➡️</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Category Card 2 -->
+                <div class="group block relative overflow-hidden rounded-xl shadow-md h-64 transition-all duration-300 hover:shadow-xl">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
+                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Trucks" src="https://images.unsplash.com/photo-1701058670970-e2e83fd9e68d" />
+                    <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">Trucks</h3>
+                                <p class="text-gray-200 text-sm mb-2">Pickup trucks and commercial vehicles</p>
+                                <span class="text-blue-300 text-sm">876 listings</span>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm p-2 rounded-full opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                                <span class="h-5 w-5 text-white">➡️</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Category Card 3 -->
+                <div class="group block relative overflow-hidden rounded-xl shadow-md h-64 transition-all duration-300 hover:shadow-xl">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
+                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="SUVs" src="https://images.unsplash.com/photo-1701058670970-e2e83fd9e68d" />
+                    <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">SUVs</h3>
+                                <p class="text-gray-200 text-sm mb-2">Sport utility vehicles of all sizes</p>
+                                <span class="text-blue-300 text-sm">1032 listings</span>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm p-2 rounded-full opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                                <span class="h-5 w-5 text-white">➡️</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Category Card 4 -->
+                <div class="group block relative overflow-hidden rounded-xl shadow-md h-64 transition-all duration-300 hover:shadow-xl">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
+                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Motorcycles" src="https://images.unsplash.com/photo-1701058670970-e2e83fd9e68d" />
+                    <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">Motorcycles</h3>
+                                <p class="text-gray-200 text-sm mb-2">Sport bikes, cruisers, and touring bikes</p>
+                                <span class="text-blue-300 text-sm">543 listings</span>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm p-2 rounded-full opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                                <span class="h-5 w-5 text-white">➡️</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Category Card 5 -->
+                <div class="group block relative overflow-hidden rounded-xl shadow-md h-64 transition-all duration-300 hover:shadow-xl">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
+                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Luxury" src="https://images.unsplash.com/photo-1701058670970-e2e83fd9e68d" />
+                    <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">Luxury</h3>
+                                <p class="text-gray-200 text-sm mb-2">Premium and high-end vehicles</p>
+                                <span class="text-blue-300 text-sm">389 listings</span>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm p-2 rounded-full opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                                <span class="h-5 w-5 text-white">➡️</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Category Card 6 -->
+                <div class="group block relative overflow-hidden rounded-xl shadow-md h-64 transition-all duration-300 hover:shadow-xl">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
+                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Electric" src="https://images.unsplash.com/photo-1701058670970-e2e83fd9e68d" />
+                    <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">Electric</h3>
+                                <p class="text-gray-200 text-sm mb-2">Electric and hybrid vehicles</p>
+                                <span class="text-blue-300 text-sm">267 listings</span>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm p-2 rounded-full opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                                <span class="h-5 w-5 text-white">➡️</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold">Recent Listings</h2>
+                <button class="group">
+                    View all
+                    <span class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1">➡️</span>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Vehicle Card 1 -->
+                <div class="h-full overflow-hidden card-hover">
+                    <div class="relative">
+                        <img class="h-48 w-full object-cover" alt="2021 Chevrolet Silverado 1500 LT" src="https://images.unsplash.com/photo-1703223915225-adc35421ce2c" />
+                        <div class="absolute top-2 right-2">
+                            <span class="badge badge-info flex items-center gap-1">New</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="mb-2 flex items-center justify-between">
+                            <span class="badge badge-outline text-blue-600 border-blue-600">2021</span>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span class="h-3 w-3 mr-1">⏰</span> 12 hours ago
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-lg mb-1 line-clamp-1">2021 Chevrolet Silverado 1500 LT</h3>
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <span class="h-3 w-3 mr-1">📍</span>
+                            <span class="line-clamp-1">Chicago, IL</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <div class="text-sm">
+                                <span class="text-gray-500">Mileage:</span> 18,000 mi
+                            </div>
+                            <div class="text-sm">
+                                <span class="text-gray-500">Condition:</span> Excellent
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 flex justify-between items-center">
+                        <div class="flex items-center">
+                            <span class="h-4 w-4 text-green-600 mr-1">🏷️</span>
+                            <span class="font-bold text-lg">$39,800</span>
+                        </div>
+                        <button class="btn btn-sm">
+                            <a href="/vehicle/5">View Details</a>
+                        </button>
+                    </div>
+                </div>
+                <!-- Repeat similar structure for other vehicles -->
+            </div>
+        </div>
+    </section>
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">How It Works</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    Our simple process makes buying and selling used vehicles easy and secure
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Step 1 -->
+                <div class="text-center">
+                    <div class="relative mb-6">
+                        <!-- Step number -->
+                        <div class="absolute -top-3 -right-3 bg-blue-600 text-white h-8 w-8 rounded-full flex items-center justify-center font-bold shadow-lg">
+                            1
+                        </div>
+                        <!-- Icon container -->
+                        <div class="bg-blue-100 text-blue-600 h-20 w-20 rounded-full flex items-center justify-center mx-auto shadow-md">
+                            <!-- Icon: Search -->
+                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1116.65 2a7.5 7.5 0 010 14.65z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Find Your Vehicle</h3>
+                    <p class="text-gray-600">Browse thousands of listings with detailed information and verified sellers.</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="text-center">
+                    <div class="relative mb-6">
+                        <!-- Step number -->
+                        <div class="absolute -top-3 -right-3 bg-blue-600 text-white h-8 w-8 rounded-full flex items-center justify-center font-bold shadow-lg">
+                            2
+                        </div>
+                        <!-- Icon container -->
+                        <div class="bg-green-100 text-green-600 h-20 w-20 rounded-full flex items-center justify-center mx-auto shadow-md">
+                            <!-- Icon: CheckCircle -->
+                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Verify Quality</h3>
+                    <p class="text-gray-600">Review vehicle history, condition reports, and seller ratings.</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="text-center">
+                    <div class="relative mb-6">
+                        <!-- Step number -->
+                        <div class="absolute -top-3 -right-3 bg-blue-600 text-white h-8 w-8 rounded-full flex items-center justify-center font-bold shadow-lg">
+                            3
+                        </div>
+                        <!-- Icon container -->
+                        <div class="bg-yellow-100 text-yellow-600 h-20 w-20 rounded-full flex items-center justify-center mx-auto shadow-md">
+                            <!-- Icon: DollarSign -->
+                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3 1.343 3 3-1.343 3-3 3m0-12c1.657 0 3-1.343 3-3s-1.343-3-3-3m0 12c-1.657 0-3 1.343-3 3s1.343 3 3 3m0-12c1.657 0 3-1.343 3-3s-1.343-3-3-3"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Secure Payment</h3>
+                    <p class="text-gray-600">Use our secure payment system for safe and protected transactions.</p>
+                </div>
+                <!-- Step 4 -->
+                <div class="text-center">
+                    <div class="relative mb-6">
+                        <!-- Step number -->
+                        <div class="absolute -top-3 -right-3 bg-blue-600 text-white h-8 w-8 rounded-full flex items-center justify-center font-bold shadow-lg">
+                            4
+                        </div>
+                        <!-- Icon container -->
+                        <div class="bg-purple-100 text-purple-600 h-20 w-20 rounded-full flex items-center justify-center mx-auto shadow-md">
+                            <!-- Icon: Car -->
+                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l1.5 1.5M18 13l-1.5 1.5M5 13h14M5 13l-1.5-1.5M18 13l1.5-1.5M5 13H3m16 0h2m-2 0l1.5 1.5M3 13l-1.5 1.5M5 13l1.5-1.5M18 13l-1.5-1.5M5 13H3m16 0h2m-2 0l1.5-1.5M3 13l-1.5-1.5"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Get Your Vehicle</h3>
+                    <p class="text-gray-600">Arrange pickup or delivery and enjoy your new ride!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-16 bg-gradient-to-br from-blue-900 to-blue-800 text-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">What Our Users Say</h2>
+                <p class="text-blue-200 max-w-2xl mx-auto">
+                    Thousands of buyers and sellers trust VehicleMarket for their used vehicle needs
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 relative">
+                    <div class="absolute top-4 right-4 text-blue-400/20 text-6xl font-serif">"</div>
+                    <div class="flex items-center mb-4">
+                        <div class="mr-4">
+                            <img class="h-14 w-14 rounded-full object-cover border-2 border-blue-400" alt="Michael Johnson avatar" src="https://images.unsplash.com/photo-1694388001616-1176f534d72f" />
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Michael Johnson</h4>
+                            <p class="text-blue-300 text-sm">Car Enthusiast</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-3">
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                    </div>
+                    <p class="text-blue-100">I found my dream car on VehicleMarket! The search filters made it easy to find exactly what I was looking for, and the seller was responsive and professional. Highly recommend this platform!</p>
+                </div>
+                <!-- Testimonial 2 -->
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 relative">
+                    <div class="absolute top-4 right-4 text-blue-400/20 text-6xl font-serif">"</div>
+                    <div class="flex items-center mb-4">
+                        <div class="mr-4">
+                            <img class="h-14 w-14 rounded-full object-cover border-2 border-blue-400" alt="Sarah Williams avatar" src="https://images.unsplash.com/photo-1694388001616-1176f534d72f" />
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Sarah Williams</h4>
+                            <p class="text-blue-300 text-sm">First-time Buyer</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-3">
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-gray-400">⭐</span>
+                    </div>
+                    <p class="text-blue-100">As someone who knew very little about cars, I was nervous about buying used. The detailed listings and seller verification gave me confidence, and I ended up with a great vehicle at a fair price.</p>
+                </div>
+                <!-- Testimonial 3 -->
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 relative">
+                    <div class="absolute top-4 right-4 text-blue-400/20 text-6xl font-serif">"</div>
+                    <div class="flex items-center mb-4">
+                        <div class="mr-4">
+                            <img class="h-14 w-14 rounded-full object-cover border-2 border-blue-400" alt="David Rodriguez avatar" src="https://images.unsplash.com/photo-1694388001616-1176f534d72f" />
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">David Rodriguez</h4>
+                            <p class="text-blue-300 text-sm">Car Dealer</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-3">
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                    </div>
+                    <p class="text-blue-100">I've been selling vehicles on multiple platforms, but VehicleMarket has brought me the most serious buyers. The listing process is straightforward, and the support team is always helpful.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-16 bg-gradient-to-r from-blue-600 to-blue-800 relative overflow-hidden">
+        <!-- Background pattern -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg ... %3C/svg%3E'); background-size: 24px 24px;"></div>
+        </div>
+        <!-- Decorative circles -->
+        <div class="absolute -top-24 -left-24 w-64 h-64 bg-blue-500 rounded-full opacity-20 blur-3xl"></div>
+        <div class="absolute -bottom-32 -right-32 w-80 h-80 bg-blue-300 rounded-full opacity-20 blur-3xl"></div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="text-white">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                        Ready to Sell Your Vehicle?
+                    </h2>
+                    <p class="text-blue-100 text-lg mb-8 max-w-lg">
+                        List your vehicle on VehicleMarket and reach thousands of potential buyers. Our platform makes selling easy, secure, and fast.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="/sell" class="inline-flex items-center bg-white text-blue-700 hover:bg-blue-50 text-lg font-medium px-6 py-3 rounded-md">
+                            List Your Vehicle
+                            <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-7-7l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                        <a href="/how-it-works" class="text-white border border-white hover:bg-white/10 text-lg font-medium px-6 py-3 rounded-md">
+                            Learn More
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden lg:block">
+                    <div class="relative">
+                        <div class="absolute -inset-4 bg-blue-400/20 rounded-full blur-xl"></div>
+                        <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+                            <img 
+                                class="w-full h-auto" 
+                                src="https://images.unsplash.com/photo-1634981297356-f9b4daa98a92"
+                                alt="Person selling a car" 
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="bg-gray-900 text-gray-300">
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
+                        VehicleMarket
+                    </span>
+                    <p class="mt-4 text-sm">
+                        The premier marketplace for buying and selling used vehicles. Find your perfect ride or sell your vehicle quickly and easily.
+                    </p>
+                    <div class="flex space-x-4 mt-6">
+                        <a href="#" class="hover:text-blue-400 transition-colors">
+                            <!-- Facebook Icon -->
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.5228-4.4772-10-10-10S2 6.4772 2 12c0 4.9914 3.657 9.1283 8.438 9.8787v-6.988h-2.54v-2.89h2.54V9.7976c0-2.5067 1.4926-3.89 3.7777-3.89 1.0946 0 2.2383.195 2.2383.195v2.46h-1.26c-1.243 0-1.63.7722-1.63 1.562v1.875h2.773l-.443 2.89h-2.33v6.988C18.343 21.1283 22 16.9914 22 12z"/></svg>
+                        </a>
+                        <a href="#" class="hover:text-blue-400 transition-colors">
+                            <!-- Twitter Icon -->
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19.633 7.9976c.013.18.013.3601.013.5401 0 5.49-4.1786 11.82-11.82 11.82-2.3476 0-4.5324-.6867-6.3656-1.8662.3306.039.6489.052.9865.052 1.945 0 3.7353-.6489 5.1576-1.7366-1.8183-.026-3.3521-1.2336-3.8822-2.8858.2537.039.5073.065.7742.065.3728 0 .7456-.052 1.1.1302-1.8984-.386-3.3237-2.0587-3.3237-4.0735v-.052c.556.3121 1.206.4994 1.8938.5202-1.1202-.7463-1.8698-2.0273-1.8698-3.4767 0-.768.2056-1.4798.5686-2.0946C6.946 7.8367 10.378 9.715 14.2444 9.9107c-.065-.3121-.091-.6241-.091-.9491 0-2.312 1.8698-4.1818 4.1818-4.1818 1.2043 0 2.292.5073 3.0602 1.3325.9491-.182.1837-.5073.5073-.7812-.3121.9491-.9491 1.7322-1.7971 2.2383.8433-.091 1.6364-.326 2.3781-.649z"/></svg>
+                        </a>
+                        <a href="#" class="hover:text-blue-400 transition-colors">
+                            <!-- Instagram Icon -->
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.1633c3.2044 0 3.584.012 4.8505.07 1.3667.062 2.6333.347 3.608.863a7.3724 7.3724 0 012.6565 2.6566c.516.9746.8017 2.2412.863 3.608.058.7776.07 1.1704.07 4.8505s-.012 3.584-.07 4.8505c-.062 1.3668-.347 2.6333-.863 3.608a7.373 7.373 0 01-2.6565 2.6566c-.9747.516-.2413.8017-1.608.863-1.2665.058-1.6461.07-4.8505.07s-3.584-.012-4.8505-.07c-1.3667-.062-2.6333-.347-3.608-.863a7.3724 7.3724 0 01-2.6566-2.6566c-.516-.9747-.8017-2.2412-.863-3.608C2.1754 15.7472 2.1633 15.3676 2.1633 12s.012-3.584.07-4.8505c.062-1.3667.347-2.6333.863-3.608A7.372 7.372 0 015.7534 2.9966c.9747-.516 2.2413-.8017 3.608-.863 1.2665-.058 1.6461-.07 4.8505-.07zm0 1.8373c-3.1744 0-3.5556.012-4.8055.07-1.063.048-1.6416.227-2.023.378a5.472 5.472 0 00-1.9716 1.2932 5.472 5.472 0 00-1.2932 1.9716c-.1512.3814-.33.96-.378 2.023-.058 1.25-.07 1.6311-.07 4.8055s.012 3.5556.07 4.8055c.048 1.063.227 1.6416.378 2.023a5.472 5.472 0 001.2932 1.9716 5.472 5.472 0 001.9716 1.2932c.3814.1512.96.33 2.023.378 1.25.058 1.6311.07 4.8055.07s3.5556-.012 4.8055-.07c1.063-.048 1.6416-.227 2.023-.378a5.472 5.472 0 001.9716-1.2932 5.472 5.472 0 001.2932-1.9716c.1512-.3814.33-.96.378-2.023.058-1.25.07-1.6311.07-4.8055s-.012-3.5556-.07-4.8055c-.048-1.063-.227-1.6416-.378-2.023a5.472 5.472 0 00-1.2932-1.9716 5.472 5.472 0 00-1.9716-1.2932c-.3814-.1512-.96-.33-2.023-.378-1.25-.058-1.6311-.07-4.8055-.07zM12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.173a4.011 4.011 0 110-8.022 4.011 4.011 0 010 8.022zm6.406-11.845a1.44 1.44 0 11-2.881-.001 1.44 1.44 0 012.881.001z"/></svg>
+                        </a>
+                        <a href="#" class="hover:text-blue-400 transition-colors">
+                            <!-- YouTube Icon -->
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M21.8 8.001a2.752 2.752 0 00-1.937-1.938C18.047 6 12 6 12 6s-6.047 0-7.863.063A2.752 2.752 0 002.2 8.001 28.346 28.346 0 002 12c0 1.35.071 2.7.2 3.999a2.752 2.752 0 001.937 1.938C5.953 18 12 18 12 18s6.047 0 7.863-.063a2.752 2.752 0 001.937-1.938A28.346 28.346 0 0022 12a28.346 28.346 0 00-.2-3.999zM10 15V9l5 3-5 3z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <!-- Quick Links -->
+                <div>
+                    <p class="font-semibold text-white mb-4">Quick Links</p>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/about" class="hover:text-blue-400 transition-colors">About Us</a></li>
+                        <li><a href="/how-it-works" class="hover:text-blue-400 transition-colors">How It Works</a></li>
+                        <li><a href="/testimonials" class="hover:text-blue-400 transition-colors">Testimonials</a></li>
+                        <li><a href="/careers" class="hover:text-blue-400 transition-colors">Careers</a></li>
+                        <li><a href="/blog" class="hover:text-blue-400 transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+                <!-- Vehicle Categories -->
+                <div>
+                    <p class="font-semibold text-white mb-4">Vehicle Categories</p>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/category/cars" class="hover:text-blue-400 transition-colors">Cars</a></li>
+                        <li><a href="/category/motorcycles" class="hover:text-blue-400 transition-colors">Motorcycles</a></li>
+                        <li><a href="/category/trucks" class="hover:text-blue-400 transition-colors">Trucks</a></li>
+                        <li><a href="/category/suvs" class="hover:text-blue-400 transition-colors">SUVs</a></li>
+                        <li><a href="/category/vans" class="hover:text-blue-400 transition-colors">Vans</a></li>
+                    </ul>
+                </div>
+                <!-- Contact Info -->
+                <div>
+                    <p class="font-semibold text-white mb-4">Contact Us</p>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start">
+                            <span class="mr-2 mt-0.5">&#x1F4CD;</span>
+                            <span>123 Vehicle Street, Automotive City, AC 12345</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">&#x260E;</span>
+                            <span>+1 (555) 123-4567</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">&#x2709;</span>
+                            <span>info@vehiclemarket.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-8 border-gray-700" />
+            <div class="flex flex-col md:flex-row justify-between items-center text-sm">
+                <p>© 2025 VehicleMarket. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="/privacy-policy" class="hover:text-blue-400 transition-colors">Privacy Policy</a>
+                    <a href="/terms-of-service" class="hover:text-blue-400 transition-colors">Terms of Service</a>
+                    <a href="/cookie-policy" class="hover:text-blue-400 transition-colors">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
     <script th:src="@{/main.js}"></script>
 </body>
 </html>
