@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>VehicleMarket</title>
+    <link rel="stylesheet" th:href="@{/index.css}" />
+</head>
+<body>
+    <h1>Selamat Datang di VehicleMarket</h1>
+    <p>Temukan dan jual kendaraan bekas Anda dengan mudah.</p>
+
+    <div class="menu">
+        <a th:href="@{/login}">Login</a> |
+        <a th:href="@{/register}">Register</a>
+    </div>
+
+    <script th:src="@{/main.js}"></script>
+</body>
+</html>
