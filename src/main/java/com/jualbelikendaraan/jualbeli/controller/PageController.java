@@ -8,4 +8,9 @@ public class PageController {
     public String dashboard() {
         return "index";
     }
+
+    @GetMapping("/wishlist")
+    public String wishlist() {
+        return "wishlist"; // Akan mencari wishlist.html di templates/
+    }
 }
