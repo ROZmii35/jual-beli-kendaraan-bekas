@@ -5,6 +5,11 @@ import jakarta.persistence.*;
 @DiscriminatorValue("Motor")
 public class Motor extends  Kendaraan{
     private String jenisMotor;
+
+    public Motor() {
+        super();
+    }
+
     @Override
     public String getJenis(){
         return "Motor";

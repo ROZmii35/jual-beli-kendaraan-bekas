@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${user.id == null ? 'Tambah Pengguna' : 'Edit Pengguna'}">Formulir Pengguna</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light text */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            background-color: #2d3748; /* Slightly lighter dark for containers */
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            color: #4299e1; /* Blue for headers */
+        }
+        .form-label {
+            color: #a0aec0; /* Lighter grey for labels */
+        }
+        .form-input,
+        .form-select {
+            background-color: #4a5568;
+            color: #e2e8f0;
+            border: 1px solid #2d3748;
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+        }
+        .btn-primary {
+            background-color: #4299e1;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #3182ce;
+        }
+        .btn-secondary {
+            background-color: #718096;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #5f6e7f;
+        }
+    </style>
+</head>
+<body class="p-8">
+    <div class="container mx-auto p-6 max-w-lg">
+        <h1 class="text-3xl font-bold mb-6 header" th:text="${user.id == null ? 'Tambah Pengguna Baru' : 'Edit Pengguna'}"></h1>
+
+        <form th:action="${user.id == null ? '/admin/users' : '/admin/users/edit/' + user.id}" th:object="${user}" method="post">
+            <input type="hidden" th:field="*{id}" />
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+            <div class="mb-4">
+                <label for="username" class="block text-sm font-medium form-label mb-1">Username:</label>
+                <input type="text" id="username" th:field="*{username}" class="form-input" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="password" class="block text-sm font-medium form-label mb-1">Password:</label>
+                <input type="password" id="password" th:field="*{password}" class="form-input" th:required="${user.id == null}">
+                <p th:if="${user.id != null}" class="text-sm text-gray-400 mt-1">Biarkan kosong jika tidak ingin mengubah password.</p>
+            </div>
+
+            <div class="mb-4">
+                <label for="email" class="block text-sm font-medium form-label mb-1">Email:</label>
+                <input type="email" id="email" th:field="*{email}" class="form-input" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="role" class="block text-sm font-medium form-label mb-1">Role:</label>
+                <input type="text" id="role" th:field="*{role}" class="form-input" placeholder="e.g., USER, ADMIN" required>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <button type="submit" class="btn-primary">Simpan</button>
+                <a th:href="@{/admin/users}" class="btn-secondary">Batal</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html> 

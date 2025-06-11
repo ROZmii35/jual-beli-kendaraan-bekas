@@ -6,6 +6,11 @@ import jakarta.persistence.*;
 @DiscriminatorValue("Mobil")
 public class Mobil extends Kendaraan {
     private int jumlahPintu;
+
+    public Mobil() {
+        super();
+    }
+
     @Override
     public String getJenis(){
         return "Mobil";

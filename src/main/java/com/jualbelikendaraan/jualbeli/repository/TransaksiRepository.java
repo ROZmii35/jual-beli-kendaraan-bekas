@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface TransaksiRepository extends JpaRepository<Transaksi, Long> {
-    List<Transaksi> findByUser(User user);
+    List<Transaksi> findByBuyer(User buyer);
+    List<Transaksi> findByBuyerOrSeller(User buyer, User seller);
 }

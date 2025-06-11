@@ -9,6 +9,8 @@ public abstract class Orang {
     private String username;
     private String password;
     private String role;
+    private String photoUrl;
+    private String email;
     public Long getId() {
         return id;
     }
@@ -33,5 +35,16 @@ public abstract class Orang {
     public void setRole(String role) {
         this.role = role;
     }
-    
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
