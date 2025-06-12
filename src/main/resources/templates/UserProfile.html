@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for a futuristic look */
+        @layer base {
+            body {
+                @apply bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 text-gray-100 font-sans;
+            }
+        }
+        .card-glass {
+            background-color: rgba(30, 30, 30, 0.7); /* Darker transparent background */
+            backdrop-filter: blur(10px); /* Glassmorphism effect */
+            -webkit-backdrop-filter: blur(10px); /* Safari support */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .profile-photo-border {
+            border: 3px solid transparent;
+            background-image: linear-gradient(to right top, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff, #46eefa, #5ffbf1);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            animation: pulse-glow 2s infinite alternate;
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 5px rgba(105, 191, 248, 0.5), 0 0 10px rgba(105, 191, 248, 0.3); }
+            100% { box-shadow: 0 0 15px rgba(105, 191, 248, 0.8), 0 0 25px rgba(105, 191, 248, 0.6); }
+        }
+        .gradient-text {
+            @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400;
+        }
+        .btn-gradient {
+            @apply bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg transition duration-300 ease-in-out transform hover:scale-105;
+        }
+        .btn-red-gradient {
+            @apply bg-gradient-to-r from-red-600 to-pink-700 hover:from-red-700 hover:to-pink-800 text-white font-semibold shadow-lg transition duration-300 ease-in-out transform hover:scale-105;
+        }
+        /* Keyframes for blob animation */
+        @keyframes blob {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+        .animate-blob {
+            animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+            animation-delay: 4s;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center font-sans p-4">
+
+    <div class="card-glass rounded-3xl max-w-md w-full p-10 mx-auto text-gray-100 relative overflow-hidden">
+        <!-- Background elements for futuristic feel -->
+        <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+            <div class="absolute w-40 h-40 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob top-10 left-10"></div>
+            <div class="absolute w-40 h-40 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000 bottom-10 right-10"></div>
+        </div>
+
+        <h1 class="text-4xl font-extrabold mb-8 text-center gradient-text drop-shadow-lg">Profil Pengguna</h1>
+        
+        <div th:if="${user}" class="z-10 relative">
+            <div class="flex justify-center mb-8">
+                <div class="p-1 rounded-full profile-photo-border">
+                    <img th:src="${user.photoUrl != null ? user.photoUrl : 'https://api.lorem.space/image/face?w=150&h=150'}" alt="Profil Pengguna" class="w-32 h-32 rounded-full object-cover"/>
+                </div>
+            </div>
+            <div class="space-y-6 text-center">
+                <div class="p-4 bg-gray-800 bg-opacity-30 rounded-lg">
+                    <p class="text-gray-400 text-sm mb-1">Username:</p>
+                    <p class="text-2xl font-bold text-white tracking-wide" th:text="${user.username}">Nama Pengguna</p>
+                </div>
+                <div class="p-4 bg-gray-800 bg-opacity-30 rounded-lg">
+                    <p class="text-gray-400 text-sm mb-1">Role:</p>
+                    <p class="text-xl font-bold text-white tracking-wide" th:text="${user.role}">Peran Pengguna</p>
+                </div>
+                <!-- Anda bisa menambahkan informasi profil lainnya di sini -->
+            </div>
+            <div class="mt-10 text-center space-y-4">
+                <a href="/" class="block w-full py-3 rounded-lg btn-gradient">
+                    Kembali ke Beranda
+                </a>
+                <form th:action="@{/logout}" method="post" class="block">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="w-full py-3 rounded-lg btn-red-gradient">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div th:unless="${user}" class="text-center text-red-400 z-10 relative">
+            <p class="text-lg">Pengguna tidak ditemukan atau tidak login.</p>
+            <div class="mt-8 text-center">
+                <a href="/user-login" class="inline-block py-3 px-8 rounded-lg btn-gradient">
+                    Login Sekarang
+                </a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html> 

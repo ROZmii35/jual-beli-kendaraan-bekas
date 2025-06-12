@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
+<head>
+    <meta charset="UTF-8" />
+    <title>Pasar Kendaraan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+
+        @layer base {
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 222.2 84% 4.9%;
+            --primary: 222.2 47.4% 11.2%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96.1%;
+            --secondary-foreground: 222.2 47.4% 11.2%;
+            --muted: 210 40% 96.1%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96.1%;
+            --accent-foreground: 222.2 47.4% 11.2%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 222.2 84% 4.9%;
+            --radius: 0.5rem;
+            
+            /* Custom brand colors */
+            --brand-primary: 210 100% 50%;
+            --brand-secondary: 25 100% 50%;
+            --brand-accent: 160 100% 45%;
+        }
+
+        .dark {
+            --background: 222.2 84% 4.9%;
+            --foreground: 210 40% 98%;
+            --card: 222.2 84% 4.9%;
+            --card-foreground: 210 40% 98%;
+            --popover: 222.2 84% 4.9%;
+            --popover-foreground: 210 40% 98%;
+            --primary: 210 40% 98%;
+            --primary-foreground: 222.2 47.4% 11.2%;
+            --secondary: 217.2 32.6% 17.5%;
+            --secondary-foreground: 210 40% 98%;
+            --muted: 217.2 32.6% 17.5%;
+            --muted-foreground: 215 20.2% 65.1%;
+            --accent: 217.2 32.6% 17.5%;
+            --accent-foreground: 210 40% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 217.2 32.6% 17.5%;
+            --input: 217.2 32.6% 17.5%;
+            --ring: 212.7 26.8% 83.9%;
+        }
+        }
+
+        @layer base {
+        * {
+            @apply border-border;
+        }
+        body {
+            @apply bg-background text-foreground;
+            font-feature-settings: "rlig" 1, "calt" 1;
+        }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+        background: hsl(var(--secondary));
+        border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+        background: hsl(var(--muted-foreground) / 0.5);
+        border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+        background: hsl(var(--muted-foreground) / 0.8);
+        }
+
+        /* Custom animations */
+        @keyframes float {
+        0% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+        100% {
+            transform: translateY(0px);
+        }
+        }
+
+        .animate-float {
+        animation: float 3s ease-in-out infinite;
+        }
+
+        /* Custom gradient text */
+        .gradient-text {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-green-500;
+        }
+
+        /* Custom card hover effect */
+        .card-hover {
+        @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="sticky top-0 z-50 w-full bg-white border-b shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="/" class="flex items-center">
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent">
+                        Pasar Kendaraan
+                    </h1>
+                </a>
+                <!-- Navigation - Desktop -->
+                <nav class="hidden md:flex items-center space-x-1" aria-label="Navigasi Utama">
+                    <!-- Search Bar - Desktop -->
+                    <!-- <div class="flex-1 mx-4">
+                        <form class="w-full flex" role="search">
+                            <input
+                                type="search"
+                                placeholder="Cari kendaraan..."
+                                class="w-full rounded-r-none focus-visible:ring-blue-500"
+                                aria-label="Cari kendaraan"
+                            />
+                            <button 
+                                type="submit" 
+                                class="rounded-l-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
+                                aria-label="Cari"
+                            >
+                                🔍
+                            </button>
+                        </form>
+                    </div> -->
+                    <a href="/wishlist" class="flex items-center gap-1 px-2 py-1 hover:bg-gray-100 rounded">
+                        ❤️ <span class="hidden lg:inline">Daftar Keinginan</span>
+                    </a>
+                    <a href="/messages" class="flex items-center gap-1 px-2 py-1 hover:bg-gray-100 rounded">
+                        💬 <span class="hidden lg:inline">Pesan</span>
+                    </a>
+                    <a href="/notifications" class="flex items-center gap-1 px-2 py-1 hover:bg-gray-100 rounded">
+                        🔔 <span class="hidden lg:inline">Notifikasi</span>
+                    </a>
+                    <!-- My Vehicles Link for authenticated users -->
+                    <a sec:authorize="isAuthenticated()" href="/my-vehicles" class="flex items-center gap-1 px-2 py-1 hover:bg-gray-100 rounded">
+                        🚗 <span class="hidden lg:inline">Kendaraan Saya</span>
+                    </a>
+                    <!-- Profile Link for authenticated users -->
+                    <a sec:authorize="isAuthenticated()" href="/profile" class="flex items-center gap-1 px-2 py-1 hover:bg-gray-100 rounded">
+                        👤 <span class="hidden lg:inline">Profil</span>
+                    </a>
+                    <a sec:authorize="isAuthenticated()" href="/transactions" class="flex items-center gap-1 px-2 py-1 hover:bg-gray-100 rounded">
+                        📊 <span class="hidden lg:inline">Histori Transaksi</span>
+                    </a>
+                    <a href="/sell" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded ml-2">
+                        Jual Kendaraan
+                    </a>
+                    
+                    <!-- Login Link for unauthenticated users -->
+                    <a sec:authorize="isAnonymous()" th:href="@{/user-login}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded ml-2">
+                        Login
+                    </a>
+
+                    <!-- Logout Button for authenticated users -->
+                    <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" class="ml-2">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                            Logout
+                        </button>
+                    </form>
+                </nav>
+                <!-- Mobile Menu Button -->
+                <div class="flex md:hidden">
+                    <button id="mobileMenuBtn" class="px-2 py-1" aria-label="Buka menu seluler">
+                        ☰
+                    </button>
+                </div>
+            </div>
+            <!-- Search Bar - Mobile -->
+            <div class="md:hidden py-2">
+                <form class="flex" role="search">
+                    <input
+                        type="search"
+                        placeholder="Cari kendaraan..."
+                        class="w-full rounded-r-none"
+                        aria-label="Cari kendaraan"
+                    />
+                    <button 
+                        type="submit" 
+                        class="rounded-l-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
+                        aria-label="Cari"
+                    >
+                        🔍
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+    <!--Hero Section-->
+    <section class="relative bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white overflow-hidden">
+        <!-- Background pattern -->
+        <div class="absolute inset-0 opacity-10">
+            <!-- <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.2"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E'); background-size: 24px 24px;"></div> -->
+        </div>
+        <div class="container mx-auto px-4 py-16 md:py-24 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Hero Content -->
+                <div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+                        Temukan <span class="text-blue-300">Kendaraan Bekas</span> Sempurna Anda
+                    </h1>
+                    <p class="text-lg md:text-xl mb-8 text-blue-100 max-w-xl">
+                        Jelajahi ribuan mobil, truk, dan sepeda motor bekas berkualitas dari penjual terpercaya di seluruh negeri.
+                    </p>
+                    <!-- Search Form -->
+                    <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 mb-8">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <select class="bg-white/90 text-gray-800" aria-label="Pilih jenis kendaraan">
+                                <option value="" disabled selected>Jenis Kendaraan</option>
+                                <option value="all">Semua Kendaraan</option>
+                                <option value="cars">Mobil</option>
+                                <option value="trucks">Truk</option>
+                                <option value="suvs">SUV</option>
+                                <option value="motorcycles">Sepeda Motor</option>
+                                <option value="vans">Van</option>
+                            </select>
+                            <select class="bg-white/90 text-gray-800" aria-label="Pilih merek kendaraan">
+                                <option value="" disabled selected>Merek</option>
+                                <option value="all">Semua Merek</option>
+                                <option value="toyota">Toyota</option>
+                                <option value="honda">Honda</option>
+                                <option value="ford">Ford</option>
+                                <option value="chevrolet">Chevrolet</option>
+                                <option value="bmw">BMW</option>
+                                <option value="mercedes">Mercedes-Benz</option>
+                            </select>
+                            <select class="bg-white/90 text-gray-800" aria-label="Pilih model kendaraan">
+                                <option value="" disabled selected>Model</option>
+                                <option value="all">Semua Model</option>
+                                <option value="camry">Camry</option>
+                                <option value="civic">Civic</option>
+                                <option value="f150">F-150</option>
+                                <option value="silverado">Silverado</option>
+                                <option value="3series">Seri 3</option>
+                                <option value="eclass">E-Class</option>
+                            </select>
+                        </div>
+                        <div class="flex">
+                            <input placeholder="Cari berdasarkan kata kunci..." class="bg-white/90 text-gray-800 rounded-r-none" aria-label="Cari berdasarkan kata kunci" />
+                            <button class="rounded-l-none bg-blue-600 hover:bg-blue-700" aria-label="Cari">
+                                🔍 Cari
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Quick Links -->
+                    <div class="flex flex-wrap gap-3">
+                        <a href="/category/cars" class="inline-flex items-center text-blue-200 hover:text-white">
+                            <span>Mobil Populer</span>
+                            <span class="h-4 w-4">➡️</span>
+                        </a>
+                        <a href="/category/trucks" class="inline-flex items-center text-blue-200 hover:text-white">
+                            <span>Truk</span>
+                            <span class="h-4 w-4">➡️</span>
+                        </a>
+                        <a href="/category/suvs" class="inline-flex items-center text-blue-200 hover:text-white">
+                            <span>SUV</span>
+                            <span class="h-4 w-4">➡️</span>
+                        </a>
+                        <a href="/category/luxury" class="inline-flex items-center text-blue-200 hover:text-white">
+                            <span>Kendaraan Mewah</span>
+                            <span class="h-4 w-4">➡️</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- Hero Image -->
+                <div class="hidden lg:block">
+                    <div class="relative">
+                        <div class="absolute -inset-4 bg-blue-400/20 rounded-full blur-xl"></div>
+                        <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+                            <img class="w-full h-auto" alt="Tampilan mobil mewah" src="https://images.unsplash.com/photo-1607806266487-fd2c3cfe7753" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- My Vehicles Section -->
+    <section th:if="${myKendaraanList != null and not #lists.isEmpty(myKendaraanList)}" class="py-12 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold">Kendaraan Saya</h2>
+                <button class="group">
+                    Lihat semua
+                    <span class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1">➡️</span>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Vehicle Card Dynamic for My Vehicles -->
+                <div th:each="kendaraan : ${myKendaraanList}" class="h-full overflow-hidden card-hover bg-white rounded-lg shadow-md">
+                    <div class="relative">
+                        <img class="h-48 w-full object-cover rounded-t-lg"
+                            th:src="${kendaraan.imageUrl}" th:alt="${kendaraan.namaKendaraan}" />
+                        <div class="absolute top-2 left-2">
+                            <span th:if="${kendaraan.status.name() == 'BELUM_DIPENDING'}" class="inline-block bg-yellow-500 text-white text-xs font-semibold px-2 py-1 rounded-full">BELUM DIPENDING</span>
+                            <span th:if="${kendaraan.status.name() == 'SUDAH_DIPENDING'}" class="inline-block bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full">SUDAH DIPENDING</span>
+                            <span th:if="${kendaraan.status.name() == 'TERJUAL'}" class="inline-block bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">TERJUAL</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="mb-2 flex items-center justify-between">
+                            <span class="badge badge-outline text-blue-600 border-blue-600" th:text="${kendaraan.tahun}"></span>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span class="h-3 w-3 mr-1">⏰</span> Baru
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-lg mb-1 line-clamp-1" th:text="${kendaraan.namaKendaraan}"></h3>
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <span class="h-3 w-3 mr-1">🚗</span>
+                            <span class="line-clamp-1" th:text="${kendaraan.merk + ' ' + kendaraan.tipe}"></span>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <div class="text-sm">
+                                <span class="text-gray-500">Harga:</span> <span class="font-bold text-lg" th:text="'Rp ' + ${#numbers.formatDecimal(kendaraan.hargaPublik, 0, 'POINT', 0, 'COMMA')}"></span>
+                            </div>
+                            <div class="text-sm">
+                                <span class="text-gray-500">Jenis:</span> <span th:text="${kendaraan.jenisKendaraan.name().replace('_', ' ')}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 flex justify-end items-center">
+                        <div th:if="${kendaraan.seller != null and loggedInUserId != kendaraan.seller.id}">
+                            <button class="btn btn-sm">
+                                <a th:href="@{'/vehicle/' + ${kendaraan.id}}">Beli</a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold">Kendaraan Unggulan</h2>
+                <button class="group">
+                    Lihat semua
+                    <span class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1">➡️</span>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Vehicle Card Dynamic -->
+                <div th:each="kendaraan : ${kendaraanList}" class="h-full overflow-hidden card-hover">
+                    <div class="relative">
+                        <img class="h-48 w-full object-cover"
+                             th:src="${kendaraan.imageUrl}"
+                             th:alt="${kendaraan.namaKendaraan}" />
+                        <div class="absolute top-2 left-2">
+                            <span th:if="${kendaraan.status.name() == 'BELUM_DIPENDING'}" class="inline-block bg-yellow-500 text-white text-xs font-semibold px-2 py-1 rounded-full">BELUM DIPENDING</span>
+                            <span th:if="${kendaraan.status.name() == 'SUDAH_DIPENDING'}" class="inline-block bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full">SUDAH DIPENDING</span>
+                            <span th:if="${kendaraan.status.name() == 'TERJUAL'}" class="inline-block bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">TERJUAL</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="mb-2 flex items-center justify-between">
+                            <span class="badge badge-outline text-blue-600 border-blue-600" th:text="${kendaraan.tahun}"></span>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span class="h-3 w-3 mr-1">⏰</span> Baru
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-lg mb-1 line-clamp-1" th:text="${kendaraan.namaKendaraan}"></h3>
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <span class="h-3 w-3 mr-1">🚗</span>
+                            <span class="line-clamp-1" th:text="${kendaraan.merk + ' ' + kendaraan.tipe}"></span>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <div class="text-sm">
+                                <span class="text-gray-500">Harga:</span> <span class="font-bold text-lg" th:text="'Rp ' + ${#numbers.formatDecimal(kendaraan.hargaPublik, 0, 'POINT', 0, 'COMMA')}"></span>
+                            </div>
+                            <div class="text-sm">
+                                <span class="text-gray-500">Jenis:</span> <span th:text="${kendaraan.jenisKendaraan.name().replace('_', ' ')}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 flex justify-end items-center">
+                        <div th:if="${kendaraan.seller != null and loggedInUserId != kendaraan.seller.id}">
+                            <button class="btn btn-sm">
+                                <a th:href="@{'/vehicle/' + ${kendaraan.id}}">Beli</a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">Jelajahi Berdasarkan Kategori</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    Jelajahi beragam pilihan kendaraan bekas kami berdasarkan kategori untuk menemukan yang Anda cari
+                </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Category Card 1 -->
+                <div class="group block relative overflow-hidden rounded-xl shadow-md h-64 transition-all duration-300 hover:shadow-xl">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
+                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Mobil" src="https://images.unsplash.com/photo-1701058670970-e2e83fd9e68d" />
+                    <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">Mobil</h3>
+                                <p class="text-gray-200 text-sm mb-2">Sedan, coupe, convertible, dan lainnya</p>
+                                <span class="text-blue-300 text-sm">1245 daftar</span>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm p-2 rounded-full opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                                <span class="h-5 w-5 text-white">➡️</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Category Card 2 -->
+                <div class="group block relative overflow-hidden rounded-xl shadow-md h-64 transition-all duration-300 hover:shadow-xl">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
+                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Truk" src="https://images.unsplash.com/photo-1701058670970-e2e83fd9e68d" />
+                    <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">Truk</h3>
+                                <p class="text-gray-200 text-sm mb-2">Truk pikap dan kendaraan komersial</p>
+                                <span class="text-blue-300 text-sm">876 daftar</span>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm p-2 rounded-full opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                                <span class="h-5 w-5 text-white">➡️</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Category Card 3 -->
+                <div class="group block relative overflow-hidden rounded-xl shadow-md h-64 transition-all duration-300 hover:shadow-xl">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
+                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="SUV" src="https://images.unsplash.com/photo-1701058670970-e2e83fd9e68d" />
+                    <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">SUV</h3>
+                                <p class="text-gray-200 text-sm mb-2">Kendaraan sport utility berbagai ukuran</p>
+                                <span class="text-blue-300 text-sm">1032 daftar</span>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm p-2 rounded-full opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                                <span class="h-5 w-5 text-white">➡️</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Category Card 4 -->
+                <div class="group block relative overflow-hidden rounded-xl shadow-md h-64 transition-all duration-300 hover:shadow-xl">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
+                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Sepeda Motor" src="https://images.unsplash.com/photo-1701058670970-e2e83fd9e68d" />
+                    <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">Sepeda Motor</h3>
+                                <p class="text-gray-200 text-sm mb-2">Motor sport, cruiser, dan touring</p>
+                                <span class="text-blue-300 text-sm">543 daftar</span>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm p-2 rounded-full opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                                <span class="h-5 w-5 text-white">➡️</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Category Card 5 -->
+                <div class="group block relative overflow-hidden rounded-xl shadow-md h-64 transition-all duration-300 hover:shadow-xl">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
+                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Mewah" src="https://images.unsplash.com/photo-1701058670970-e2e83fd9e68d" />
+                    <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">Mewah</h3>
+                                <p class="text-gray-200 text-sm mb-2">Kendaraan premium dan kelas atas</p>
+                                <span class="text-blue-300 text-sm">389 daftar</span>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm p-2 rounded-full opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                                <span class="h-5 w-5 text-white">➡️</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Category Card 6 -->
+                <div class="group block relative overflow-hidden rounded-xl shadow-md h-64 transition-all duration-300 hover:shadow-xl">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"></div>
+                    <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Listrik" src="https://images.unsplash.com/photo-1701058670970-e2e83fd9e68d" />
+                    <div class="absolute bottom-0 left-0 right-0 p-6 z-20">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">Listrik</h3>
+                                <p class="text-gray-200 text-sm mb-2">Kendaraan listrik dan hibrida</p>
+                                <span class="text-blue-300 text-sm">267 daftar</span>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm p-2 rounded-full opacity-0 transform translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                                <span class="h-5 w-5 text-white">➡️</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold">Daftar Terbaru</h2>
+                <button class="group">
+                    Lihat semua
+                    <span class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1">➡️</span>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Vehicle Card 1 -->
+                <div class="h-full overflow-hidden card-hover">
+                    <div class="relative">
+                        <img class="h-48 w-full object-cover" alt="2021 Chevrolet Silverado 1500 LT" src="https://images.unsplash.com/photo-1703223915225-adc35421ce2c" />
+                        <div class="absolute top-2 right-2">
+                            <span class="badge badge-info flex items-center gap-1">Baru</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="mb-2 flex items-center justify-between">
+                            <span class="badge badge-outline text-blue-600 border-blue-600">2021</span>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <span class="h-3 w-3 mr-1">⏰</span> 12 jam yang lalu
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-lg mb-1 line-clamp-1">2021 Chevrolet Silverado 1500 LT</h3>
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <span class="h-3 w-3 mr-1">📍</span>
+                            <span class="line-clamp-1">Chicago, IL</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <div class="text-sm">
+                                <span class="text-gray-500">Jarak Tempuh:</span> 18,000 mil
+                            </div>
+                            <div class="text-sm">
+                                <span class="text-gray-500">Kondisi:</span> Sangat Baik
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 flex justify-between items-center">
+                        <div class="flex items-center">
+                            <span class="h-4 w-4 text-green-600 mr-1">🏷️</span>
+                            <span class="font-bold text-lg">$39,800</span>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm">
+                                <a href="/vehicle/5">Lihat Detail</a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Repeat similar structure for other vehicles -->
+            </div>
+        </div>
+    </section>
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">Cara Kerjanya</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    Proses sederhana kami membuat pembelian dan penjualan kendaraan bekas menjadi mudah dan aman
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Step 1 -->
+                <div class="text-center">
+                    <div class="relative mb-6">
+                        <!-- Step number -->
+                        <div class="absolute -top-3 -right-3 bg-blue-600 text-white h-8 w-8 rounded-full flex items-center justify-center font-bold shadow-lg">
+                            1
+                        </div>
+                        <!-- Icon container -->
+                        <div class="bg-blue-100 text-blue-600 h-20 w-20 rounded-full flex items-center justify-center mx-auto shadow-md">
+                            <!-- Icon: Search -->
+                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1116.65 2a7.5 7.5 0 010 14.65z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Temukan Kendaraan Anda</h3>
+                    <p class="text-gray-600">Jelajahi ribuan daftar dengan informasi detail dan penjual terverifikasi.</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="text-center">
+                    <div class="relative mb-6">
+                        <!-- Step number -->
+                        <div class="absolute -top-3 -right-3 bg-blue-600 text-white h-8 w-8 rounded-full flex items-center justify-center font-bold shadow-lg">
+                            2
+                        </div>
+                        <!-- Icon container -->
+                        <div class="bg-green-100 text-green-600 h-20 w-20 rounded-full flex items-center justify-center mx-auto shadow-md">
+                            <!-- Icon: CheckCircle -->
+                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Verifikasi Kualitas</h3>
+                    <p class="text-gray-600">Tinjau riwayat kendaraan, laporan kondisi, dan peringkat penjual.</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="text-center">
+                    <div class="relative mb-6">
+                        <!-- Step number -->
+                        <div class="absolute -top-3 -right-3 bg-blue-600 text-white h-8 w-8 rounded-full flex items-center justify-center font-bold shadow-lg">
+                            3
+                        </div>
+                        <!-- Icon container -->
+                        <div class="bg-yellow-100 text-yellow-600 h-20 w-20 rounded-full flex items-center justify-center mx-auto shadow-md">
+                            <!-- Icon: DollarSign -->
+                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3 1.343 3 3-1.343 3-3 3m0-12c1.657 0 3-1.343 3-3s-1.343-3-3-3m0 12c-1.657 0-3 1.343-3 3s1.343 3 3 3m0-12c1.657 0 3-1.343 3-3s-1.343-3-3-3"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Pembayaran Aman</h3>
+                    <p class="text-gray-600">Gunakan sistem pembayaran aman kami untuk transaksi yang aman dan terlindungi.</p>
+                </div>
+                <!-- Step 4 -->
+                <div class="text-center">
+                    <div class="relative mb-6">
+                        <!-- Step number -->
+                        <div class="absolute -top-3 -right-3 bg-blue-600 text-white h-8 w-8 rounded-full flex items-center justify-center font-bold shadow-lg">
+                            4
+                        </div>
+                        <!-- Icon container -->
+                        <div class="bg-purple-100 text-purple-600 h-20 w-20 rounded-full flex items-center justify-center mx-auto shadow-md">
+                            <!-- Icon: Car -->
+                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l1.5 1.5M18 13l-1.5 1.5M5 13h14M5 13l-1.5-1.5M18 13l1.5-1.5M5 13H3m16 0h2m-2 0l1.5 1.5M3 13l-1.5 1.5M5 13l1.5-1.5M18 13l-1.5-1.5M5 13H3m16 0h2m-2 0l1.5-1.5M3 13l-1.5-1.5"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Dapatkan Kendaraan Anda</h3>
+                    <p class="text-gray-600">Atur penjemputan atau pengiriman dan nikmati perjalanan baru Anda!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-16 bg-gradient-to-br from-blue-900 to-blue-800 text-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">Apa Kata Pengguna Kami</h2>
+                <p class="text-blue-200 max-w-2xl mx-auto">
+                    Ribuan pembeli dan penjual mempercayai Pasar Kendaraan untuk kebutuhan kendaraan bekas mereka
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 relative">
+                    <div class="absolute top-4 right-4 text-blue-400/20 text-6xl font-serif">"</div>
+                    <div class="flex items-center mb-4">
+                        <div class="mr-4">
+                            <img class="h-14 w-14 rounded-full object-cover border-2 border-blue-400" alt="Avatar Michael Johnson" src="https://images.unsplash.com/photo-1694388001616-1176f534d72f" />
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Michael Johnson</h4>
+                            <p class="text-blue-300 text-sm">Penggemar Mobil</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-3">
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                    </div>
+                    <p class="text-blue-100">Saya menemukan mobil impian saya di Pasar Kendaraan! Filter pencarian memudahkan untuk menemukan persis apa yang saya cari, dan penjual responsif dan profesional. Sangat merekomendasikan platform ini!</p>
+                </div>
+                <!-- Testimonial 2 -->
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 relative">
+                    <div class="absolute top-4 right-4 text-blue-400/20 text-6xl font-serif">"</div>
+                    <div class="flex items-center mb-4">
+                        <div class="mr-4">
+                            <img class="h-14 w-14 rounded-full object-cover border-2 border-blue-400" alt="Avatar Sarah Williams" src="https://images.unsplash.com/photo-1694388001616-1176f534d72f" />
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Sarah Williams</h4>
+                            <p class="text-blue-300 text-sm">Pembeli Pertama Kali</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-3">
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-gray-400">⭐</span>
+                    </div>
+                    <p class="text-blue-100">Sebagai seseorang yang tidak tahu banyak tentang mobil, saya khawatir untuk membeli bekas. Daftar detail dan verifikasi penjual memberi saya kepercayaan diri, dan saya mendapatkan kendaraan hebat dengan harga wajar.</p>
+                </div>
+                <!-- Testimonial 3 -->
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 relative">
+                    <div class="absolute top-4 right-4 text-blue-400/20 text-6xl font-serif">"</div>
+                    <div class="flex items-center mb-4">
+                        <div class="mr-4">
+                            <img class="h-14 w-14 rounded-full object-cover border-2 border-blue-400" alt="Avatar David Rodriguez" src="https://images.unsplash.com/photo-1694388001616-1176f534d72f" />
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">David Rodriguez</h4>
+                            <p class="text-blue-300 text-sm">Dealer Mobil</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-3">
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                        <span class="h-4 w-4 text-yellow-400 fill-yellow-400">⭐</span>
+                    </div>
+                    <p class="text-blue-100">Saya telah menjual kendaraan di berbagai platform, tetapi Pasar Kendaraan telah mendatangkan pembeli paling serius. Proses daftar mudah, dan tim dukungan selalu membantu.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-16 bg-gradient-to-br from-blue-900 to-blue-800 relative overflow-hidden">
+        <!-- Background pattern -->
+        <div class="absolute inset-0 opacity-10">
+            <!-- <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg ... %3C/svg%3E'); background-size: 24px 24px;"></div> -->
+        </div>
+        <!-- Decorative circles -->
+        <div class="absolute -top-24 -left-24 w-64 h-64 bg-blue-500 rounded-full opacity-20 blur-3xl"></div>
+        <div class="absolute -bottom-32 -right-32 w-80 h-80 bg-blue-300 rounded-full opacity-20 blur-3xl"></div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="text-white">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                        Siap Menjual Kendaraan Anda?
+                    </h2>
+                    <p class="text-blue-100 text-lg mb-8 max-w-lg">
+                        Daftarkan kendaraan Anda di Pasar Kendaraan dan jangkau ribuan calon pembeli. Platform kami membuat penjualan mudah, aman, dan cepat.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="/sell" class="inline-flex items-center bg-white text-blue-700 hover:bg-blue-50 text-lg font-medium px-6 py-3 rounded-md">
+                            Daftarkan Kendaraan Anda
+                            <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-7-7l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                        <a href="/how-it-works" class="text-white border border-white hover:bg-white/10 text-lg font-medium px-6 py-3 rounded-md">
+                            Pelajari Lebih Lanjut
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden lg:block">
+                    <div class="relative">
+                        <div class="absolute -inset-4 bg-blue-400/20 rounded-full blur-xl"></div>
+                        <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+                            <img 
+                                class="w-full h-auto" 
+                                src="https://images.unsplash.com/photo-1634981297356-f9b4daa98a92"
+                                alt="Orang menjual mobil" 
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="bg-gray-900 text-gray-300">
+        <div class="container mx-auto px-4 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
+                        Pasar Kendaraan
+                    </span>
+                    <p class="mt-4 text-sm">
+                        Pasar utama untuk membeli dan menjual kendaraan bekas. Temukan kendaraan sempurna Anda atau jual kendaraan Anda dengan cepat dan mudah.
+                    </p>
+                    <div class="flex space-x-4 mt-6">
+                        <a href="#" class="hover:text-blue-400 transition-colors">
+                            <!-- Facebook Icon -->
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.5228-4.4772-10-10-10S2 6.4772 2 12c0 4.9914 3.657 9.1283 8.438 9.8787v-6.988h-2.54v-2.89h2.54V9.7976c0-2.5067 1.4926-3.89 3.7777-3.89 1.0946 0 2.2383.195 2.2383.195v2.46h-1.26c-1.243 0-1.63.7722-1.63 1.562v1.875h2.773l-.443 2.89h-2.33v6.988C18.343 21.1283 22 16.9914 22 12z"/></svg>
+                        </a>
+                        <a href="#" class="hover:text-blue-400 transition-colors">
+                            <!-- Twitter Icon -->
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19.633 7.9976c.013.18.013.3601.013.5401 0 5.49-4.1786 11.82-11.82 11.82-2.3476 0-4.5324-.6867-6.3656-1.8662.3306.039.6489.052.9865.052 1.945 0 3.7353-.6489 5.1576-1.7366-1.8183-.026-3.3521-1.2336-3.8822-2.8858.2537.039.5073.065.7742.065.3728 0 .7456-.052 1.1.1302-1.8984-.386-3.3237-2.0587-3.3237-4.0735v-.052c.556.3121 1.206.4994 1.8938.5202-1.1202-.7463-1.8698-2.0273-1.8698-3.4767 0-.768.2056-1.4798.5686-2.0946C6.946 7.8367 10.378 9.715 14.2444 9.9107c-.065-.3121-.091-.6241-.091-.9491 0-2.312 1.8698-4.1818 4.1818-4.1818 1.2043 0 2.292.5073 3.0602 1.3325.9491-.182.1837-.5073.5073-.7812-.3121.9491-.9491 1.7322-1.7971 2.2383.8433-.091 1.6364-.326 2.3781-.649z"/></svg>
+                        </a>
+                        <a href="#" class="hover:text-blue-400 transition-colors">
+                            <!-- Instagram Icon -->
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.1633c3.2044 0 3.584.012 4.8505.07 1.3667.062 2.6333.347 3.608.863a7.3724 7.3724 0 012.6565 2.6566c.516.9746.8017 2.2412.863 3.608.058.7776.07 1.1704.07 4.8505s-.012 3.584-.07 4.8505c-.062 1.3668-.347 2.6333-.863 3.608a7.373 7.373 0 01-2.6565 2.6566c-.9747.516-.2413.8017-1.608.863-1.2665.058-1.6461.07-4.8505.07s-3.584-.012-4.8505-.07c-1.3667-.062-2.6333-.347-3.608-.863a7.3724 7.3724 0 01-2.6566-2.6566c-.516-.9747-.8017-2.2412-.863-3.608C2.1754 15.7472 2.1633 15.3676 2.1633 12s.012-3.584.07-4.8505c.062-1.3667.347-2.6333.863-3.608A7.372 7.372 0 015.7534 2.9966c.9747-.516 2.2413-.8017 3.608-.863 1.2665-.058 1.6461-.07 4.8505-.07zm0 1.8373c-3.1744 0-3.5556.012-4.8055.07-1.063.048-1.6416.227-2.023.378a5.472 5.472 0 00-1.9716 1.2932 5.472 5.472 0 00-1.2932 1.9716c-.1512.3814-.33.96-.378 2.023-.058 1.25-.07 1.6311-.07 4.8055s.012 3.5556.07 4.8055c.048 1.063.227 1.6416.378 2.023a5.472 5.472 0 001.2932 1.9716 5.472 5.472 0 001.9716 1.2932c.3814.1512.96.33 2.023.378 1.25.058 1.6311.07 4.8055.07s3.5556-.012 4.8055-.07c1.063-.048 1.6416-.227 2.023-.378a5.472 5.472 0 001.2932-1.2932 5.472 5.472 0 001.2932-1.9716c.1512-.3814.33-.96.378-2.023.058-1.25.07-1.6311.07-4.8055s-.012-3.5556-.07-4.8055c-.048-1.063-.227-1.6416-.378-2.023a5.472 5.472 0 00-1.2932-1.9716 5.472 5.472 0 00-1.9716-1.2932c-.3814-.1512-.96-.33-2.023-.378-1.25-.058-1.6311-.07-4.8055-.07zM12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.173a4.011 4.011 0 110-8.022 4.011 4.011 0 010 8.022zm6.406-11.845a1.44 1.44 0 11-2.881-.001 1.44 1.44 0 012.881.001z"/></svg>
+                        </a>
+                        <a href="#" class="hover:text-blue-400 transition-colors">
+                            <!-- YouTube Icon -->
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M21.8 8.001a2.752 2.752 0 00-1.937-1.938C18.047 6 12 6 12 6s-6.047 0-7.863.063A2.752 2.752 0 002.2 8.001 28.346 28.346 0 002 12c0 1.35.071 2.7.2 3.999a2.752 2.752 0 001.937 1.938C5.953 18 12 18 12 18s6.047 0 7.863-.063a2.752 2.752 0 001.937-1.938A28.346 28.346 0 0022 12a28.346 28.346 0 00-.2-3.999zM10 15V9l5 3-5 3z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <!-- Quick Links -->
+                <div>
+                    <p class="font-semibold text-white mb-4">Tautan Cepat</p>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/about" class="hover:text-blue-400 transition-colors">Tentang Kami</a></li>
+                        <li><a href="/how-it-works" class="hover:text-blue-400 transition-colors">Cara Kerjanya</a></li>
+                        <li><a href="/testimonials" class="hover:text-blue-400 transition-colors">Testimoni</a></li>
+                        <li><a href="/careers" class="hover:text-blue-400 transition-colors">Karir</a></li>
+                        <li><a href="/blog" class="hover:text-blue-400 transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+                <!-- Vehicle Categories -->
+                <div>
+                    <p class="font-semibold text-white mb-4">Kategori Kendaraan</p>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/category/cars" class="hover:text-blue-400 transition-colors">Mobil</a></li>
+                        <li><a href="/category/motorcycles" class="hover:text-blue-400 transition-colors">Sepeda Motor</a></li>
+                        <li><a href="/category/trucks" class="hover:text-blue-400 transition-colors">Truk</a></li>
+                        <li><a href="/category/suvs" class="hover:text-blue-400 transition-colors">SUV</a></li>
+                        <li><a href="/category/vans" class="hover:text-blue-400 transition-colors">Van</a></li>
+                    </ul>
+                </div>
+                <!-- Contact Info -->
+                <div>
+                    <p class="font-semibold text-white mb-4">Hubungi Kami</p>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start">
+                            <span class="mr-2 mt-0.5">&#x1F4CD;</span>
+                            <span>123 Jalan Kendaraan, Kota Otomotif, AC 12345</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">&#x260E;</span>
+                            <span>+1 (555) 123-4567</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">&#x2709;</span>
+                            <span>info@pasarkendaraan.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-8 border-gray-700" />
+            <div class="flex flex-col md:flex-row justify-between items-center text-sm">
+                <p>© 2025 Pasar Kendaraan. Semua hak dilindungi undang-undang.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="/privacy-policy" class="hover:text-blue-400 transition-colors">Kebijakan Privasi</a>
+                    <a href="/terms-of-service" class="hover:text-blue-400 transition-colors">Ketentuan Layanan</a>
+                    <a href="/cookie-policy" class="hover:text-blue-400 transition-colors">Kebijakan Cookie</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script th:src="@{/main.js}"></script>
+</body>
+</html>
